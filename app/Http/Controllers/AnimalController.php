@@ -22,8 +22,18 @@ class AnimalController extends Controller{
     	return view('ver-todos')->with('animals', $animals);
     }
     public function verAnimal($id){
-    	$animal = Animal::find($id);
-    	return view('ver-animal')->with('a', $animal);
+        $animals = Animal::all();
+    	$ani = Animal::find($id);
+
+        $imgs = DB::table('animals_images')->where('id_animal', $id)->get();
+     
+        foreach ($imgs as $imagens) {
+            $images[] =  DB::table('images')->where('id',$imagens->id_image)->get();
+            
+        }
+
+        
+    	return view('ver-todos')->with('ani', $ani)->with('animals', $animals)->with('images', $images);
     }
 
     public function novoAnimal(){
@@ -47,8 +57,6 @@ class AnimalController extends Controller{
         //tive que mudar o create pq agora estou passando uma classe request responsavel por validar os campos.
         //Validação no back, primeiro o nome e o request depois o tipo de validação.
 
-    dd($_FILES);
-    die();
             $animal = Animal::create($request->all());
             
             $ani_insertedId = $animal->id;

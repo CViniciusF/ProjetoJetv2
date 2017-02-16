@@ -34,4 +34,48 @@
 					@endif
 				</div>
 			</div>
+			@if(isset($ani))
+			<div class="reveal" id="exampleModal1" data-reveal>
+  				<h3>Visualizando animal {{$ani->ani_nome}}</h3>
+				<div class="row">
+					<div class="small-12 columns">
+							<ul>
+								<li>
+									{{$ani->ani_descricao}}
+								</li>
+								<li>
+									{{$ani->ani_peso}}
+								</li>
+								<li>
+									{{$ani->ani_raca}}
+								</li>
+							</ul>
+							@foreach($images as $img)
+								<?php $i = 0; ?>
+									<img src="{{$img[$i]->img}}">
+								<?php $i++;  ?>
+							@endforeach
+						</div>
+					</div>
+  				<a href="/animais" class="close-button" data-close aria-label="Close modal" type="button">
+    				<span style="background: #fff;" aria-hidden="true">&times;</span>
+  				</a>
+  			</div>
+  			@endif
+
+		@section('scripts')
+			<script>
+	    		$(document).ready(function(){
+	    			$(document).foundation();
+	    		});
+	    	</script>
+	    	@if(isset($ani))
+				<script>
+					$(function() {
+    					var popup = new Foundation.Reveal($('#exampleModal1'));
+    					popup.open();
+					});
+				</script>
+			@endif
+	    @stop
 	@stop

@@ -9,11 +9,12 @@
 				<div class="small-12 columns">
 					<form id="form" method="POST" action="/animais/adicionar-animal" enctype="multipart/form-data">
 						<input type="hidden" name="_token" value=" {{csrf_token()}} ">
-						<div class="row">
+				
 							<div class="small-12 medium-4 columns">
 								<label>Nome do Animal</label>
 								<input type="text" name="ani_nome">
 							</div>
+
 							<div class="small-12 medium-4 columns">
 								<label>Raça</label>
 								<input type="text" name="ani_raca">
@@ -22,7 +23,7 @@
 								<label>Peso (Kg)</label>
 								<input type="text" name="ani_peso" >
 							</div>
-						</div>
+						
 						<br/>
 						<div class="row">
 							<div class="small-12 medium-8 medium-offset-2 large-6 large-offset-3 columns end">
@@ -30,9 +31,16 @@
 								<textarea type="text" name="ani_descricao"></textarea>
 							</div>
 						</div>
+						
+						<div class="append" style="text-align: center;">
+							<input class="upload" id="files0" type="file" name="imgs[]" multiple>
+							
+						</div>	
+						
+						
 						<div class="row">
 							<div class="small-12 medium-8 medium-offset-2 large-6 large-offset-3 columns end">
-								<div id="targetElement"></div>
+							 	<output id="list"></output>
 							</div>
 						</div>
 						<br/>
@@ -43,52 +51,69 @@
 							{{$error}}
 						</div>
 					@endforeach
-					<div class="row">
-						<div class="small-12 medium-8 medium-offset-2 large-6 large-offset-3 columns end">
-							 <div class="row" id="image_preview"></div>
-						</div>
-					</div>
+					
 				</div>
 			</div>
 	@stop
 	@section('scripts')
 	<script type="text/javascript">
-    //get the form
-    var form = document.getElementById('form');
+		
+		var idCounter = 0;
+			function addfield(af) {
+				$(".upload").attr("style", " width: 0; visibility: hidden");
+				var input = document.createElement("input");
+				input.type = "file";
+				input.id = "files" + af;
+				input.name = "imgs[]";
+				input.className = "upload";
+				  // set the CSS class
+				$(".append").append(input);	
+				document.getElementById('files' + af).addEventListener('change', handleFileSelect, false);
+				//++idCounter;
+				alert(af);
+				
+	    	};
+	
+	function handleFileSelect(evt) {
 
-    //disable form submit
-    form.onsubmit = function(){
-        return false;
-    };
+		addfield(++idCounter);
 
-    //disable the submit button
-    var submitBtn = form.querySelector("button[type=submit]");
-    submitBtn.setAttribute("disabled", "disabled");
+    	var files = evt.target.files;
 
-    //create the uploader
-    var uploader = new RealUploader("#targetElement", {
-        accept: "image/*",
-        autoStart: false, //upload file automatically on select as GMAIL
-        url: "upload.php",
-        listeners: {
-            //on upload end appends the file name to the form
-            finish: function(fileNames) {
+    // Loop through the FileList and render image files as thumbnails.
+    	for (var i = 0, f; f = files[i]; i++) {
 
-                //for each uploaded file add a hidden input to the form
-                //with the file name. The remote path should be know only on server script
-                console.log('Uploaded files are', fileNames);
-                for(var i = 0; i<fileNames.length; i++) {
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'hidden');
-                    input.setAttribute('name', 'files[]');
-                    input.value = fileNames[i];
-                    form.appendChild(input);
-                }
-                form.onsubmit = null;
-                submitBtn.removeAttribute("disabled");
-            }
-        }
-    });
+      // Only process image files.
+     		if (!f.type.match('image.*')) {
+        		continue;
+      		}
+
+		    var reader = new FileReader();
+
+		     // Closure to capture the file information.
+		     reader.onload = (function(theFile) {
+		        return function(e) {
+		          // Render thumbnail.
+		          var span = document.createElement('span');
+		          span.innerHTML = 
+		          [
+		            '<img style="height: 75px; border: 1px solid #000; margin: 5px" src="', 
+		            e.target.result,
+		            '" title="', escape(theFile.name), 
+		            '"/>'
+		          ].join('');
+		          
+		          document.getElementById('list').insertBefore(span, null);
+		        };
+		      })(f);
+
+		      // Read in the image file as a data URL.
+		      reader.readAsDataURL(f);
+    	}
+  	}
+
+  	document.getElementById('files' + idCounter).addEventListener('change', handleFileSelect, false);
+
     </script>
 	@stop
 	
