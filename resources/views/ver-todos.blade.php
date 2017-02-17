@@ -22,6 +22,11 @@
 						</a>	
 						</td>
 						<td>	
+						<a href="/animais/editar-animal/<?= $a->id ?>">
+							<span class='fa fa-edit'></span>
+						</a>	
+						</td>
+						<td>	
 						<a href="/animais/remover-animal/<?= $a->id ?>">
 							<span class='fa fa-trash'></span>
 						</a>	
@@ -33,6 +38,10 @@
 					@if(old('ani_nome'))
 						<br/>
 						<div>Animal {{old('ani_nome')}} adicionado com sucesso!</div>
+					@endif
+					@if(isset($nome))
+						<br/>
+						<div>Animal {{$nome}} atualizado com sucesso!</div>
 					@endif
 				</div>
 			</div>

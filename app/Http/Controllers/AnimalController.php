@@ -9,6 +9,7 @@ use ProjetoJetv2\Image;
 use ProjetoJetv2\Animals_images;
 use Validator;
 use Response;
+
 use ProjetoJetv2\Http\Requests\AnimalRequest;
 
 class AnimalController extends Controller{
@@ -41,10 +42,25 @@ class AnimalController extends Controller{
         //return view('ver-todos')->with('ani', $ani)->with('animals', $animals)->with('images', $images);
         return Response::json(array('animal' => $ani, 'images' => $images));
     }
+
+     public function veranimalEditar($id){
+        
+        $ani = Animal::find($id);
+
+        $imgs = DB::table('animals_images')->where('id_animal', $id)->get();
+        $i = 0;
+        foreach ($imgs as $imagens) {
+            $images[] =  DB::table('images')->where('id',$imagens->id_image)->get();
+
+            $imgformatada[$i]['img'] = $images[$i][0]->img;
+            $imgformatada[$i]['id'] = $images[$i][0]->id;
+            $i++;
+        }
+        return view('ver-animal')->with('a', $ani)->with('images', $imgformatada);
+    }
+    
     
     	
-    
-
     public function novoAnimal(){
     	return view('formulario-animal');
     }
@@ -60,6 +76,22 @@ class AnimalController extends Controller{
         $animal = Animal::find($id);
         $animal->delete();
         return redirect('/animais');
+    }
+
+    public function updateAnimal(AnimalRequest $request){
+        $id = $request->input('id');
+
+        $nome = $request->input('ani_nome');
+        $desc = $request->input('ani_descricao');
+        $peso = $request->input('ani_peso');
+        $raca = $request->input('ani_raca');
+
+        $aniAtt = DB::table('animals')
+            ->where('id', $id)
+            ->update(array('ani_nome' => $nome, 'ani_descricao' => $desc, 'ani_peso' => $peso, 'ani_raca' => $raca));
+
+        return redirect('/animais')->with('nome', $nome);
+
     }
 
    public function adicionarAnimal(AnimalRequest $request){
