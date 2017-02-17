@@ -5,7 +5,7 @@ Route::get('/', function () {
 });
 
 Route::get('/animais', 'AnimalController@lista');
-Route::get('/animais/ver-animal/{id}', 'AnimalController@verAnimal');
+Route::post('/animais/ver-animal', 'AnimalController@verAnimal');
 Route::get('/animais/remover-animal/{id}', 'AnimalController@removerAnimal');
 Route::get('/animais/novo-animal', 'AnimalController@novoAnimal');
 Route::post('/animais/adicionar-animal', 'AnimalController@adicionarAnimal');
